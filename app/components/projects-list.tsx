@@ -323,7 +323,14 @@ export function ProjectsList() {
                 <Button 
                   type="submit"
                   disabled={creating || !name.trim()}
-                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white shadow-lg font-semibold disabled:opacity-50"
+                  onClick={(e) => {
+                    if (!name.trim()) {
+                      e.preventDefault()
+                      toast.error('Please enter a project name')
+                      return
+                    }
+                  }}
+                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {creating ? 'Creating...' : 'Create Project'}
                 </Button>
