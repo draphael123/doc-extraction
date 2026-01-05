@@ -2,6 +2,17 @@
 
 A production-ready web application for ingesting, extracting, and managing information from large document bases (thousands+ files).
 
+## 📖 User Guide
+
+**New to the platform?** Check out our comprehensive [User Guide](./USER_GUIDE.md) to learn how to:
+- Create projects and upload documents
+- Build extraction templates
+- Run extraction jobs
+- Review and edit results
+- Generate master PDFs
+
+👉 **[Read the User Guide →](./USER_GUIDE.md)**
+
 ## Features
 
 - **Document Ingestion**
