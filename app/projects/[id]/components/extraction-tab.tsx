@@ -140,6 +140,7 @@ export function ExtractionTab({
           <Button
             onClick={startExtraction}
             disabled={running || !selectedTemplate || templates.length === 0}
+            className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
           >
             <Play className="mr-2 h-4 w-4" />
             {running ? 'Starting...' : 'Start Extraction'}

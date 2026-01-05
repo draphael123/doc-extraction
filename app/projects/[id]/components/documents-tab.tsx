@@ -76,13 +76,13 @@ export function DocumentsTab({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'COMPLETED':
-        return 'text-green-600'
+        return 'text-green-600 font-semibold'
       case 'PROCESSING':
-        return 'text-blue-600'
+        return 'text-blue-600 font-semibold animate-pulse'
       case 'FAILED':
-        return 'text-red-600'
+        return 'text-red-600 font-semibold'
       default:
-        return 'text-gray-600'
+        return 'text-gray-600 font-semibold'
     }
   }
 
@@ -98,10 +98,10 @@ export function DocumentsTab({
         <CardContent>
           <div
             {...getRootProps()}
-            className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${
+            className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-all ${
               isDragActive
-                ? 'border-primary bg-primary/5'
-                : 'border-gray-300 hover:border-gray-400'
+                ? 'border-purple-500 bg-gradient-to-br from-purple-100 to-blue-100 scale-105 shadow-lg'
+                : 'border-purple-300 bg-gradient-to-br from-purple-50 to-blue-50 hover:border-purple-400 hover:shadow-md'
             }`}
           >
             <input {...getInputProps()} />

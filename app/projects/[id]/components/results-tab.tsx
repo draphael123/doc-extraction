@@ -172,7 +172,11 @@ export function ResultsTab({
                 <Label htmlFor="needsReview">Show only needs review</Label>
               </div>
 
-              <Button onClick={generatePDF} disabled={generatingPdf || results.length === 0}>
+              <Button 
+                onClick={generatePDF} 
+                disabled={generatingPdf || results.length === 0}
+                className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-lg"
+              >
                 <Download className="mr-2 h-4 w-4" />
                 {generatingPdf ? 'Generating...' : 'Generate Master PDF'}
               </Button>

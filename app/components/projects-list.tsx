@@ -86,7 +86,7 @@ export function ProjectsList() {
         <h2 className="text-2xl font-semibold">Your Projects</h2>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button>
+            <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg">
               <Plus className="mr-2 h-4 w-4" />
               New Project
             </Button>
@@ -131,11 +131,11 @@ export function ProjectsList() {
       </div>
 
       {projects.length === 0 ? (
-        <Card>
+        <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <FolderOpen className="h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-muted-foreground mb-4">No projects yet</p>
-            <Button onClick={() => setOpen(true)}>
+            <FolderOpen className="h-12 w-12 text-purple-600 mb-4" />
+            <p className="text-purple-700 mb-4 font-medium">No projects yet</p>
+            <Button onClick={() => setOpen(true)} className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700">
               <Plus className="mr-2 h-4 w-4" />
               Create Your First Project
             </Button>
@@ -143,26 +143,37 @@ export function ProjectsList() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project) => (
-            <Card
-              key={project.id}
-              className="cursor-pointer hover:shadow-lg transition-shadow"
-              onClick={() => router.push(`/projects/${project.id}`)}
-            >
-              <CardHeader>
-                <CardTitle>{project.name}</CardTitle>
-                {project.description && (
-                  <CardDescription>{project.description}</CardDescription>
-                )}
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>{project._count?.documents || 0} documents</span>
-                  <span>{project._count?.templates || 0} templates</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {projects.map((project, index) => {
+            const colors = [
+              'border-blue-300 bg-gradient-to-br from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100',
+              'border-purple-300 bg-gradient-to-br from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100',
+              'border-green-300 bg-gradient-to-br from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100',
+              'border-orange-300 bg-gradient-to-br from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100',
+              'border-indigo-300 bg-gradient-to-br from-indigo-50 to-violet-50 hover:from-indigo-100 hover:to-violet-100',
+              'border-teal-300 bg-gradient-to-br from-teal-50 to-cyan-50 hover:from-teal-100 hover:to-cyan-100',
+            ]
+            const colorClass = colors[index % colors.length]
+            return (
+              <Card
+                key={project.id}
+                className={`cursor-pointer hover:shadow-xl transition-all border-2 ${colorClass}`}
+                onClick={() => router.push(`/projects/${project.id}`)}
+              >
+                <CardHeader>
+                  <CardTitle className="text-gray-800">{project.name}</CardTitle>
+                  {project.description && (
+                    <CardDescription className="text-gray-600">{project.description}</CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent>
+                  <div className="flex justify-between text-sm">
+                    <span className="font-semibold text-blue-600">{project._count?.documents || 0} documents</span>
+                    <span className="font-semibold text-purple-600">{project._count?.templates || 0} templates</span>
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          })}
         </div>
       )}
     </div>
