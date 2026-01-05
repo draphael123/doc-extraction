@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { PUBLIC_USER_ID } from '@/lib/public-user'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
-    const user = await getCurrentUser()
-    if (!user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
     const { searchParams } = new URL(request.url)
     const projectId = searchParams.get('projectId')
     const templateId = searchParams.get('templateId')
@@ -22,11 +17,11 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Verify ownership
+    // Verify project exists
     const project = await prisma.project.findFirst({
       where: {
         id: projectId,
-        userId: user.id,
+        userId: PUBLIC_USER_ID,
       },
     })
 

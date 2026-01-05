@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { PUBLIC_USER_ID } from '@/lib/public-user'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 import { getBlobAdapter } from '@/lib/storage/blob'
 
@@ -8,11 +8,6 @@ export const dynamic = 'force-dynamic'
 
 export async function POST(request: NextRequest) {
   try {
-    const user = await getCurrentUser()
-    if (!user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
     const body = await request.json()
     const { projectId, templateId } = body
 
@@ -23,11 +18,11 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Verify ownership
+    // Verify project exists
     const project = await prisma.project.findFirst({
       where: {
         id: projectId,
-        userId: user.id,
+        userId: PUBLIC_USER_ID,
       },
     })
 
