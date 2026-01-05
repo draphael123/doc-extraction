@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
       let columnY = yPosition
 
       for (const fieldResult of fieldResults) {
-        const field = fields.find((f) => f.fieldName === fieldResult.fieldName)
+        const field = (fields as any[]).find((f: any) => f.fieldName === fieldResult.fieldName)
         if (!field) continue
 
         const label = `${field.fieldName}:`

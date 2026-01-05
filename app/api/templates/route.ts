@@ -89,7 +89,13 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json(template, { status: 201 })
+    // Parse JSON string back to object for API response
+    const parsedTemplate = {
+      ...template,
+      fields: typeof template.fields === 'string' ? JSON.parse(template.fields) : template.fields,
+    }
+
+    return NextResponse.json(parsedTemplate, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
