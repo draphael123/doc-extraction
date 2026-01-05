@@ -281,9 +281,12 @@ export function ProjectsList() {
               </DialogDescription>
             </DialogHeader>
             <form
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault()
-                createProject()
+                e.stopPropagation()
+                if (!creating && name.trim()) {
+                  await createProject()
+                }
               }}
             >
               <div className="space-y-4 py-4">
@@ -323,11 +326,21 @@ export function ProjectsList() {
                 <Button 
                   type="submit"
                   disabled={creating || !name.trim()}
-                  onClick={(e) => {
+                  onClick={async (e) => {
+                    // Prevent double submission
+                    if (creating) {
+                      e.preventDefault()
+                      return
+                    }
+                    // If button is disabled but clicked (shouldn't happen), handle it
                     if (!name.trim()) {
                       e.preventDefault()
                       toast.error('Please enter a project name')
                       return
+                    }
+                    // Let form submission handle it, but ensure it works
+                    if (e.currentTarget.form) {
+                      e.currentTarget.form.requestSubmit()
                     }
                   }}
                   className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white shadow-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
