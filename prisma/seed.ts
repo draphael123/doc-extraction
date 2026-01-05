@@ -1,10 +1,26 @@
 import { PrismaClient } from '@prisma/client'
+import { PUBLIC_USER_ID } from '../lib/public-user'
 
 const prisma = new PrismaClient()
 
 async function main() {
-  // Example seed data - customize as needed
-  console.log('Seed script - add your seed data here')
+  // Create public user for unauthenticated access
+  console.log('Creating public user...')
+  
+  try {
+    await prisma.user.upsert({
+      where: { id: PUBLIC_USER_ID },
+      update: {},
+      create: {
+        id: PUBLIC_USER_ID,
+        email: 'public@example.com',
+      },
+    })
+    console.log('✓ Public user created successfully')
+  } catch (error) {
+    console.error('Error creating public user:', error)
+    throw error
+  }
 }
 
 main()
