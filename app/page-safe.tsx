@@ -23,9 +23,8 @@ export default async function Home() {
       </div>
     )
   } catch (error) {
-    // If there's an error (likely missing env vars or database), redirect to signin
-    // The error.tsx will catch and display it
     console.error('Error in page.tsx:', error)
+    // If there's an error, redirect to signin or show error
     redirect('/auth/signin')
   }
 }
