@@ -26,7 +26,9 @@ export function DocumentsTab({
   documents: Document[]
 }) {
   const [documents, setDocuments] = useState(initialDocuments)
+  const [filteredDocuments, setFilteredDocuments] = useState(initialDocuments)
   const [uploading, setUploading] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -47,19 +49,34 @@ export function DocumentsTab({
         if (res.ok) {
           const data = await res.json()
           setDocuments((prev) => [...data.documents, ...prev])
+          setFilteredDocuments((prev) => [...data.documents, ...prev])
+          toast.success(`Successfully uploaded ${data.documents.length} file(s)`)
         } else {
           const error = await res.json()
-          alert(error.error || 'Failed to upload files')
+          toast.error(error.error || 'Failed to upload files')
         }
       } catch (error) {
         console.error('Error uploading files:', error)
-        alert('Failed to upload files')
+        toast.error('Failed to upload files')
       } finally {
         setUploading(false)
       }
     },
     [projectId]
   )
+
+  // Filter documents based on search query
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const filtered = documents.filter((doc) =>
+        doc.originalName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        doc.filename.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      setFilteredDocuments(filtered)
+    } else {
+      setFilteredDocuments(documents)
+    }
+  }, [searchQuery, documents])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -143,7 +160,7 @@ export function DocumentsTab({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {documents.map((doc) => (
+                {filteredDocuments.map((doc) => (
                   <TableRow key={doc.id}>
                     <TableCell>
                       <div className="flex items-center">

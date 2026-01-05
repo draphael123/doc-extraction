@@ -1,10 +1,24 @@
 import { ProjectsList } from './components/projects-list'
 import Link from 'next/link'
-import { BookOpen, HelpCircle } from 'lucide-react'
+import { BookOpen, HelpCircle, FileText, FolderOpen, CheckCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { StatsCard } from './components/stats-card'
 
 export default async function Home() {
+  // Fetch statistics
+  let stats = null
+  try {
+    const baseUrl = process.env.NEXTAUTH_URL || process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : 'http://localhost:3000'
+    const res = await fetch(`${baseUrl}/api/stats`, { cache: 'no-store' })
+    if (res.ok) {
+      stats = await res.json()
+    }
+  } catch (error) {
+    console.error('Error fetching stats:', error)
+  }
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
@@ -54,6 +68,35 @@ export default async function Home() {
           </div>
         </div>
         
+        {stats && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <StatsCard
+              title="Total Projects"
+              value={stats.totalProjects}
+              icon={<FolderOpen className="h-5 w-5" />}
+              color="blue"
+            />
+            <StatsCard
+              title="Documents"
+              value={stats.totalDocuments}
+              icon={<FileText className="h-5 w-5" />}
+              color="purple"
+            />
+            <StatsCard
+              title="Templates"
+              value={stats.totalTemplates}
+              icon={<BookOpen className="h-5 w-5" />}
+              color="green"
+            />
+            <StatsCard
+              title="Success Rate"
+              value={`${stats.successRate}%`}
+              icon={<CheckCircle className="h-5 w-5" />}
+              color="orange"
+            />
+          </div>
+        )}
+
         <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 mb-6">
           <CardHeader>
             <div className="flex items-center gap-2">

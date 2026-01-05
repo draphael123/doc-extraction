@@ -8,7 +8,8 @@ import { Slider } from '@/components/ui/slider'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { FileText, Download, Eye, CheckCircle, AlertCircle, XCircle } from 'lucide-react'
+import { FileText, Download, Eye, CheckCircle, AlertCircle, XCircle, Search, Copy } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface Template {
   id: string
@@ -57,17 +58,34 @@ export function ResultsTab({
       if (res.ok) {
         const data = await res.json()
         setResults(data)
+        setFilteredResults(data)
       }
     } catch (error) {
       console.error('Error fetching results:', error)
+      toast.error('Failed to load results')
     } finally {
       setLoading(false)
     }
   }
 
+  // Filter results based on search query
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const filtered = results.filter((result) =>
+        result.document.originalName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        result.fieldResults.some((fr: any) => 
+          String(fr.value || '').toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      )
+      setFilteredResults(filtered)
+    } else {
+      setFilteredResults(results)
+    }
+  }, [searchQuery, results])
+
   async function generatePDF() {
     if (!selectedTemplate) {
-      alert('Please select a template')
+      toast.error('Please select a template')
       return
     }
 
@@ -84,17 +102,69 @@ export function ResultsTab({
 
       if (res.ok) {
         const data = await res.json()
+        toast.success('PDF generated successfully!')
         window.open(data.url, '_blank')
       } else {
         const error = await res.json()
-        alert(error.error || 'Failed to generate PDF')
+        toast.error(error.error || 'Failed to generate PDF')
       }
     } catch (error) {
       console.error('Error generating PDF:', error)
-      alert('Failed to generate PDF')
+      toast.error('Failed to generate PDF')
     } finally {
       setGeneratingPdf(false)
     }
+  }
+
+  async function exportToCSV() {
+    if (!selectedTemplate || results.length === 0) {
+      toast.error('No results to export')
+      return
+    }
+
+    try {
+      // Create CSV content
+      const headers = ['Document', 'Status']
+      const template = templates.find(t => t.id === selectedTemplate)
+      if (template && results.length > 0) {
+        const fieldNames = results[0].fieldResults.map((fr: any) => fr.fieldName)
+        headers.push(...fieldNames)
+      }
+
+      const rows = results.map((result) => {
+        const row = [result.document.originalName, result.status]
+        result.fieldResults.forEach((fr: any) => {
+          row.push(fr.value || '')
+        })
+        return row
+      })
+
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      ].join('\n')
+
+      // Download CSV
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+      const url = URL.createObjectURL(blob)
+      link.setAttribute('href', url)
+      link.setAttribute('download', `extraction-results-${Date.now()}.csv`)
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      toast.success('Results exported to CSV successfully!')
+    } catch (error) {
+      console.error('Error exporting CSV:', error)
+      toast.error('Failed to export CSV')
+    }
+  }
+
+  function copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text)
+    toast.success('Copied to clipboard!')
   }
 
   function getStatusIcon(status: string) {
@@ -110,7 +180,7 @@ export function ResultsTab({
     }
   }
 
-  const filteredResults = results.filter((result) => {
+  const finalFilteredResults = filteredResults.filter((result) => {
     if (showNeedsReview) {
       return result.status === 'NEEDS_REVIEW' || result.fieldResults.some((fr: any) => fr.status === 'needs_review')
     }
@@ -209,8 +279,8 @@ export function ResultsTab({
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
-                  {filteredResults.map((result) => (
+            <TableBody>
+              {finalFilteredResults.map((result) => (
                     <TableRow key={result.id}>
                       <TableCell>
                         <div className="flex items-center">

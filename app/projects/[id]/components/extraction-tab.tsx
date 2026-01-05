@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Play, RefreshCw, CheckCircle, XCircle, Clock } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface Template {
   id: string
@@ -67,7 +68,7 @@ export function ExtractionTab({
 
   async function startExtraction() {
     if (!selectedTemplate) {
-      alert('Please select a template')
+      toast.error('Please select a template')
       return
     }
 

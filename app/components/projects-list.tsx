@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
-import { Plus, FolderOpen } from 'lucide-react'
+import { Plus, FolderOpen, Search } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface Project {
   id: string
@@ -23,15 +24,29 @@ interface Project {
 export function ProjectsList() {
   const router = useRouter()
   const [projects, setProjects] = useState<Project[]>([])
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [creating, setCreating] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     fetchProjects()
   }, [])
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const filtered = projects.filter((project) =>
+        project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      setFilteredProjects(filtered)
+    } else {
+      setFilteredProjects(projects)
+    }
+  }, [searchQuery, projects])
 
   async function fetchProjects() {
     try {
@@ -39,9 +54,13 @@ export function ProjectsList() {
       if (res.ok) {
         const data = await res.json()
         setProjects(data)
+        setFilteredProjects(data)
+      } else {
+        toast.error('Failed to load projects')
       }
     } catch (error) {
       console.error('Error fetching projects:', error)
+      toast.error('Failed to load projects')
     } finally {
       setLoading(false)
     }
@@ -60,14 +79,15 @@ export function ProjectsList() {
 
       if (res.ok) {
         const project = await res.json()
+        toast.success('Project created successfully!')
         router.push(`/projects/${project.id}`)
       } else {
         const error = await res.json()
-        alert(error.error || 'Failed to create project')
+        toast.error(error.error || 'Failed to create project')
       }
     } catch (error) {
       console.error('Error creating project:', error)
-      alert('Failed to create project')
+      toast.error('Failed to create project')
     } finally {
       setCreating(false)
       setOpen(false)
@@ -77,13 +97,33 @@ export function ProjectsList() {
   }
 
   if (loading) {
-    return <div>Loading projects...</div>
+    return (
+      <div className="space-y-4">
+        <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-32 bg-gray-200 rounded animate-pulse"></div>
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 gap-4">
         <h2 className="text-2xl font-semibold">Your Projects</h2>
+        <div className="flex-1 max-w-md">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search projects..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg">
@@ -130,7 +170,21 @@ export function ProjectsList() {
         </Dialog>
       </div>
 
-      {projects.length === 0 ? (
+      {filteredProjects.length === 0 && projects.length > 0 ? (
+        <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50">
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <Search className="h-12 w-12 text-blue-600 mb-4" />
+            <p className="text-blue-700 mb-4 font-medium">No projects match your search</p>
+            <Button 
+              variant="outline" 
+              onClick={() => setSearchQuery('')}
+              className="border-blue-300 text-blue-700 hover:bg-blue-100"
+            >
+              Clear Search
+            </Button>
+          </CardContent>
+        </Card>
+      ) : filteredProjects.length === 0 ? (
         <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <FolderOpen className="h-12 w-12 text-purple-600 mb-4" />
@@ -143,7 +197,7 @@ export function ProjectsList() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project, index) => {
+          {filteredProjects.map((project, index) => {
             const colors = [
               'border-blue-300 bg-gradient-to-br from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100',
               'border-purple-300 bg-gradient-to-br from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100',

@@ -25,7 +25,9 @@ export function TemplatesTab({
   templates: Template[]
 }) {
   const [templates, setTemplates] = useState(initialTemplates)
+  const [filteredTemplates, setFilteredTemplates] = useState(initialTemplates)
   const [open, setOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [fields, setFields] = useState<any[]>([
