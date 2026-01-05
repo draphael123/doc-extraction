@@ -41,6 +41,16 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Ensure public user exists
+    await prisma.user.upsert({
+      where: { id: PUBLIC_USER_ID },
+      update: {},
+      create: {
+        id: PUBLIC_USER_ID,
+        email: 'public@example.com',
+      },
+    })
+
     const project = await prisma.project.create({
       data: {
         name,
