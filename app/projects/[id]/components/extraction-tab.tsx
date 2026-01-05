@@ -89,11 +89,11 @@ export function ExtractionTab({
         setSelectedTemplate('')
       } else {
         const error = await res.json()
-        alert(error.error || 'Failed to start extraction')
+        toast.error(error.error || 'Failed to start extraction')
       }
     } catch (error) {
       console.error('Error starting extraction:', error)
-      alert('Failed to start extraction')
+      toast.error('Failed to start extraction')
     } finally {
       setRunning(false)
     }

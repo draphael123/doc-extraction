@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Upload, File, AlertCircle } from 'lucide-react'
+import { Upload, File, AlertCircle, Search } from 'lucide-react'
 import { formatFileSize } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface Document {
   id: string

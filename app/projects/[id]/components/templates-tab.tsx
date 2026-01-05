@@ -86,14 +86,29 @@ export function TemplatesTab({
 
       if (res.ok) {
         setTemplates((prev) => prev.filter((t) => t.id !== id))
+        setFilteredTemplates((prev) => prev.filter((t) => t.id !== id))
+        toast.success('Template deleted successfully')
       } else {
-        alert('Failed to delete template')
+        toast.error('Failed to delete template')
       }
     } catch (error) {
       console.error('Error deleting template:', error)
-      alert('Failed to delete template')
+      toast.error('Failed to delete template')
     }
   }
+
+  // Filter templates based on search
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const filtered = templates.filter((template) =>
+        template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        template.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      setFilteredTemplates(filtered)
+    } else {
+      setFilteredTemplates(templates)
+    }
+  }, [searchQuery, templates])
 
   function addField() {
     setFields([
@@ -320,7 +335,7 @@ export function TemplatesTab({
         </Card>
       ) : (
         <div className="space-y-4">
-          {templates.map((template) => (
+          {filteredTemplates.map((template) => (
             <Card key={template.id}>
               <CardHeader>
                 <div className="flex justify-between items-start">
