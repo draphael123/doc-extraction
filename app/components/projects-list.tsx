@@ -138,34 +138,54 @@ export function ProjectsList() {
                 Create a new project to organize your document extractions.
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Project Name</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="My Document Project"
-                />
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                createProject()
+              }}
+            >
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Project Name</Label>
+                  <Input
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="My Document Project"
+                    required
+                    autoFocus
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Description (optional)</Label>
+                  <Input
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="A brief description..."
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Description (optional)</Label>
-                <Input
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="A brief description..."
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={createProject} disabled={creating || !name.trim()}>
-                {creating ? 'Creating...' : 'Create'}
-              </Button>
-            </DialogFooter>
+              <DialogFooter>
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  onClick={() => {
+                    setOpen(false)
+                    setName('')
+                    setDescription('')
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit"
+                  disabled={creating || !name.trim()}
+                >
+                  {creating ? 'Creating...' : 'Create'}
+                </Button>
+              </DialogFooter>
+            </form>
           </DialogContent>
         </Dialog>
       </div>
