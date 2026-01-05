@@ -3,6 +3,8 @@ import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { enqueueBatch } from '@/lib/queue/qstash'
 
+export const dynamic = 'force-dynamic'
+
 const BATCH_SIZE = 20 // Process 20 documents per batch
 
 export async function POST(request: NextRequest) {

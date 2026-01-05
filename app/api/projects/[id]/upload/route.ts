@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma'
 import { sanitizeFilename } from '@/lib/utils'
 import { put } from '@vercel/blob'
 
+export const dynamic = 'force-dynamic'
+
 const MAX_FILE_SIZE = 100 * 1024 * 1024 // 100MB
 const ALLOWED_TYPES = [
   'application/pdf',
