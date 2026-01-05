@@ -35,11 +35,13 @@ export function ResultsTab({
 }) {
   const [selectedTemplate, setSelectedTemplate] = useState<string>('')
   const [results, setResults] = useState<ExtractionResult[]>([])
+  const [filteredResults, setFilteredResults] = useState<ExtractionResult[]>([])
   const [loading, setLoading] = useState(false)
   const [confidenceThreshold, setConfidenceThreshold] = useState([0.7])
   const [showNeedsReview, setShowNeedsReview] = useState(false)
   const [selectedResult, setSelectedResult] = useState<ExtractionResult | null>(null)
   const [generatingPdf, setGeneratingPdf] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     if (selectedTemplate) {
