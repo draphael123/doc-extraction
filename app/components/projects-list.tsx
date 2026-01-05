@@ -66,7 +66,7 @@ export function ProjectsList() {
     }
   }
 
-  async function createProject() {
+    async function createProject() {
     if (!name.trim()) {
       toast.error('Please enter a project name')
       return
