@@ -67,7 +67,10 @@ export function ProjectsList() {
   }
 
   async function createProject() {
-    if (!name.trim()) return
+    if (!name.trim()) {
+      toast.error('Please enter a project name')
+      return
+    }
 
     setCreating(true)
     try {
@@ -79,20 +82,31 @@ export function ProjectsList() {
 
       if (res.ok) {
         const project = await res.json()
-        toast.success('Project created successfully!')
-        router.push(`/projects/${project.id}`)
+        toast.success('Project created successfully!', {
+          description: `"${project.name}" is ready to use`,
+        })
+        setOpen(false)
+        setName('')
+        setDescription('')
+        // Refresh projects list
+        await fetchProjects()
+        // Small delay before navigation for better UX
+        setTimeout(() => {
+          router.push(`/projects/${project.id}`)
+        }, 300)
       } else {
         const error = await res.json()
-        toast.error(error.error || 'Failed to create project')
+        toast.error(error.error || 'Failed to create project', {
+          description: 'Please try again or check your connection',
+        })
+        setCreating(false)
       }
     } catch (error) {
       console.error('Error creating project:', error)
-      toast.error('Failed to create project')
-    } finally {
+      toast.error('Failed to create project', {
+        description: 'Network error. Please check your connection and try again.',
+      })
       setCreating(false)
-      setOpen(false)
-      setName('')
-      setDescription('')
     }
   }
 
