@@ -1,0 +1,121 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { getCurrentUser } from '@/lib/auth'
+import { prisma } from '@/lib/prisma'
+import { enqueueBatch } from '@/lib/queue/qstash'
+
+const BATCH_SIZE = 20 // Process 20 documents per batch
+
+export async function POST(request: NextRequest) {
+  try {
+    const user = await getCurrentUser()
+    if (!user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { projectId, templateId } = body
+
+    if (!projectId || !templateId) {
+      return NextResponse.json(
+        { error: 'projectId and templateId are required' },
+        { status: 400 }
+      )
+    }
+
+    // Verify ownership
+    const project = await prisma.project.findFirst({
+      where: {
+        id: projectId,
+        userId: user.id,
+      },
+    })
+
+    if (!project) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+    }
+
+    const template = await prisma.extractionTemplate.findFirst({
+      where: {
+        id: templateId,
+        projectId,
+      },
+    })
+
+    if (!template) {
+      return NextResponse.json({ error: 'Template not found' }, { status: 404 })
+    }
+
+    // Get pending documents
+    const documents = await prisma.document.findMany({
+      where: {
+        projectId,
+        status: { in: ['PENDING', 'FAILED'] },
+      },
+      select: { id: true },
+    })
+
+    if (documents.length === 0) {
+      return NextResponse.json(
+        { error: 'No documents to process' },
+        { status: 400 }
+      )
+    }
+
+    // Create job
+    const job = await prisma.job.create({
+      data: {
+        projectId,
+        templateId,
+        status: 'PENDING',
+        progress: 0,
+        totalDocs: documents.length,
+        processedDocs: 0,
+        failedDocs: 0,
+      },
+    })
+
+    // Split into batches
+    const batches: string[][] = []
+    for (let i = 0; i < documents.length; i += BATCH_SIZE) {
+      batches.push(documents.slice(i, i + BATCH_SIZE).map((d) => d.id))
+    }
+
+    // Enqueue batches
+    const baseUrl = process.env.NEXTAUTH_URL || 
+                    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+                    'http://localhost:3000'
+    const workerUrl = `${baseUrl}/api/worker/extract-batch`
+
+    for (let i = 0; i < batches.length; i++) {
+      const batch = batches[i]
+      await enqueueBatch(
+        workerUrl,
+        {
+          jobId: job.id,
+          templateId,
+          documentIds: batch,
+          batchIndex: i,
+          totalBatches: batches.length,
+        },
+        {
+          idempotencyKey: `${job.id}-batch-${i}`,
+          retries: 3,
+        }
+      )
+    }
+
+    // Update job status
+    await prisma.job.update({
+      where: { id: job.id },
+      data: { status: 'RUNNING' },
+    })
+
+    return NextResponse.json(job, { status: 201 })
+  } catch (error) {
+    console.error('Error starting extraction:', error)
+    return NextResponse.json(
+      { error: 'Failed to start extraction' },
+      { status: 500 }
+    )
+  }
+}
