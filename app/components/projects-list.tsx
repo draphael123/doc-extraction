@@ -111,8 +111,134 @@ export function ProjectsList() {
 
   return (
     <div>
+      <div className="mb-6">
+        <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 bg-clip-text text-transparent">
+          Your Projects
+        </h2>
+        
+        {/* Competitive Comparison Section */}
+        <Card className="border-2 border-gradient-to-r from-purple-300 via-pink-300 to-orange-300 bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 mb-6 shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-purple-700 to-pink-700 bg-clip-text text-transparent">
+              Why Choose Document Scrapper?
+            </CardTitle>
+            <CardDescription className="text-base text-gray-700">
+              See how we compare to other document extraction platforms
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-white rounded-lg p-4 border-2 border-green-300 shadow-md">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <h3 className="font-bold text-green-700">Document Scrapper</h3>
+                </div>
+                <ul className="space-y-2 text-sm text-gray-700">
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span><strong>Unlimited</strong> document processing</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span><strong>Custom templates</strong> with regex & AI</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span><strong>Batch processing</strong> for thousands of files</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span><strong>No per-document fees</strong> or hidden costs</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span><strong>Full control</strong> over your data</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-green-600 font-bold">✓</span>
+                    <span><strong>Export to PDF & CSV</strong> included</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="bg-white rounded-lg p-4 border-2 border-red-200 shadow-md opacity-75">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                  <h3 className="font-bold text-red-600">Traditional OCR Tools</h3>
+                </div>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold">✗</span>
+                    <span>Limited to <strong>hundreds</strong> of documents</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold">✗</span>
+                    <span><strong>Fixed templates</strong> only</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold">✗</span>
+                    <span><strong>One-by-one</strong> processing</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold">✗</span>
+                    <span><strong>Per-document pricing</strong> adds up quickly</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold">✗</span>
+                    <span><strong>Data locked</strong> in their platform</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-red-500 font-bold">✗</span>
+                    <span><strong>Export costs</strong> extra</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div className="bg-white rounded-lg p-4 border-2 border-yellow-200 shadow-md opacity-75">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                  <h3 className="font-bold text-yellow-600">Enterprise Solutions</h3>
+                </div>
+                <ul className="space-y-2 text-sm text-gray-600">
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-500 font-bold">✗</span>
+                    <span>Requires <strong>enterprise contracts</strong></span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-500 font-bold">✗</span>
+                    <span><strong>Complex setup</strong> & IT integration</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-500 font-bold">✗</span>
+                    <span><strong>Weeks</strong> to deploy</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-500 font-bold">✗</span>
+                    <span><strong>$10,000+</strong> annual licenses</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-500 font-bold">✗</span>
+                    <span><strong>Vendor lock-in</strong> & dependencies</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-yellow-500 font-bold">✗</span>
+                    <span><strong>Limited customization</strong></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="mt-6 p-4 bg-gradient-to-r from-purple-100 via-pink-100 to-orange-100 rounded-lg border-2 border-purple-300">
+              <p className="text-center text-gray-800 font-semibold">
+                <span className="text-purple-700">Document Scrapper</span> gives you enterprise-grade document extraction 
+                <span className="text-pink-700"> without the enterprise price tag</span> or complexity. 
+                <span className="text-orange-700"> Start processing thousands of documents today!</span>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      
       <div className="flex justify-between items-center mb-6 gap-4">
-        <h2 className="text-2xl font-semibold">Your Projects</h2>
         <div className="flex-1 max-w-md">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -120,21 +246,23 @@ export function ProjectsList() {
               placeholder="Search projects..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-2 border-purple-200 focus:border-purple-500 focus:ring-purple-300"
             />
           </div>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg">
+            <Button className="bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600 hover:from-purple-700 hover:via-pink-700 hover:to-orange-700 text-white shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-200 font-bold">
               <Plus className="mr-2 h-4 w-4" />
               New Project
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="border-2 border-purple-300 bg-gradient-to-br from-purple-50 to-pink-50">
             <DialogHeader>
-              <DialogTitle>Create New Project</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Create New Project
+              </DialogTitle>
+              <DialogDescription className="text-gray-700">
                 Create a new project to organize your document extractions.
               </DialogDescription>
             </DialogHeader>
@@ -219,30 +347,35 @@ export function ProjectsList() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProjects.map((project, index) => {
             const colors = [
-              'border-blue-300 bg-gradient-to-br from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100',
-              'border-purple-300 bg-gradient-to-br from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100',
-              'border-green-300 bg-gradient-to-br from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100',
-              'border-orange-300 bg-gradient-to-br from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100',
-              'border-indigo-300 bg-gradient-to-br from-indigo-50 to-violet-50 hover:from-indigo-100 hover:to-violet-100',
-              'border-teal-300 bg-gradient-to-br from-teal-50 to-cyan-50 hover:from-teal-100 hover:to-cyan-100',
+              'border-2 border-blue-400 bg-gradient-to-br from-blue-100 via-cyan-100 to-blue-50 hover:from-blue-200 hover:via-cyan-200 hover:to-blue-100 shadow-lg hover:shadow-xl',
+              'border-2 border-purple-400 bg-gradient-to-br from-purple-100 via-pink-100 to-purple-50 hover:from-purple-200 hover:via-pink-200 hover:to-purple-100 shadow-lg hover:shadow-xl',
+              'border-2 border-green-400 bg-gradient-to-br from-green-100 via-emerald-100 to-green-50 hover:from-green-200 hover:via-emerald-200 hover:to-green-100 shadow-lg hover:shadow-xl',
+              'border-2 border-orange-400 bg-gradient-to-br from-orange-100 via-amber-100 to-orange-50 hover:from-orange-200 hover:via-amber-200 hover:to-orange-100 shadow-lg hover:shadow-xl',
+              'border-2 border-indigo-400 bg-gradient-to-br from-indigo-100 via-violet-100 to-indigo-50 hover:from-indigo-200 hover:via-violet-200 hover:to-indigo-100 shadow-lg hover:shadow-xl',
+              'border-2 border-teal-400 bg-gradient-to-br from-teal-100 via-cyan-100 to-teal-50 hover:from-teal-200 hover:via-cyan-200 hover:to-teal-100 shadow-lg hover:shadow-xl',
+              'border-2 border-rose-400 bg-gradient-to-br from-rose-100 via-pink-100 to-rose-50 hover:from-rose-200 hover:via-pink-200 hover:to-rose-100 shadow-lg hover:shadow-xl',
             ]
             const colorClass = colors[index % colors.length]
             return (
               <Card
                 key={project.id}
-                className={`cursor-pointer hover:shadow-xl transition-all border-2 ${colorClass}`}
+                className={`cursor-pointer hover:shadow-2xl transition-all duration-300 transform hover:scale-105 ${colorClass}`}
                 onClick={() => router.push(`/projects/${project.id}`)}
               >
                 <CardHeader>
-                  <CardTitle className="text-gray-800">{project.name}</CardTitle>
+                  <CardTitle className="text-gray-900 font-bold text-lg">{project.name}</CardTitle>
                   {project.description && (
-                    <CardDescription className="text-gray-600">{project.description}</CardDescription>
+                    <CardDescription className="text-gray-700">{project.description}</CardDescription>
                   )}
                 </CardHeader>
                 <CardContent>
-                  <div className="flex justify-between text-sm">
-                    <span className="font-semibold text-blue-600">{project._count?.documents || 0} documents</span>
-                    <span className="font-semibold text-purple-600">{project._count?.templates || 0} templates</span>
+                  <div className="flex justify-between text-sm font-semibold">
+                    <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                      📄 {project._count?.documents || 0} documents
+                    </span>
+                    <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      📋 {project._count?.templates || 0} templates
+                    </span>
                   </div>
                 </CardContent>
               </Card>
