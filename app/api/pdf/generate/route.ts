@@ -203,8 +203,10 @@ export async function POST(request: NextRequest) {
       'application/pdf'
     )
 
+    // Return the URL - for local storage, this will be an API route
+    const url = blobUrl.startsWith('http') ? blobUrl : `${process.env.NEXTAUTH_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'}${blobUrl}`
     return NextResponse.json({
-      url: blobUrl,
+      url,
       filename: `master-${project.name}-${template.name}.pdf`,
     })
   } catch (error) {

@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -16,12 +16,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -88,7 +88,7 @@ model Document {
   blobUrl      String
   fileSize     Int
   mimeType     String
-  status       DocumentStatus    @default(PENDING)
+  status       String            @default("PENDING")
   errorMessage String?
   results      ExtractionResult[]
   createdAt    DateTime          @default(now())
@@ -97,12 +97,8 @@ model Document {
   @@map("documents")
 }
 
-enum DocumentStatus {
-  PENDING
-  PROCESSING
-  COMPLETED
-  FAILED
-}
+// SQLite doesn't support enums - using String instead
+// Valid values: "PENDING", "PROCESSING", "COMPLETED", "FAILED"
 
 model ExtractionTemplate {
   id          String            @id @default(cuid())
@@ -125,7 +121,7 @@ model ExtractionResult {
   templateId   String
   template     ExtractionTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
   fieldResults Json               // Array of FieldResult
-  status       ResultStatus       @default(PENDING)
+  status       String            @default("PENDING")
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
 
@@ -133,19 +129,15 @@ model ExtractionResult {
   @@map("extraction_results")
 }
 
-enum ResultStatus {
-  PENDING
-  OK
-  NEEDS_REVIEW
-  MISSING
-}
+// SQLite doesn't support enums - using String instead
+// Valid values: "PENDING", "OK", "NEEDS_REVIEW", "MISSING"
 
 model Job {
   id          String      @id @default(cuid())
   projectId   String
   project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
   templateId  String?
-  status      JobStatus   @default(PENDING)
+  status      String      @default("PENDING")
   progress    Float       @default(0) // 0-1
   totalDocs   Int         @default(0)
   processedDocs Int       @default(0)
@@ -159,10 +151,5 @@ model Job {
   @@map("jobs")
 }
 
-enum JobStatus {
-  PENDING
-  RUNNING
-  COMPLETED
-  FAILED
-  CANCELLED
-}
+// SQLite doesn't support enums - using String instead
+// Valid values: "PENDING", "RUNNING", "COMPLETED", "FAILED", "CANCELLED"

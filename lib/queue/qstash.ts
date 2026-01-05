@@ -1,17 +1,5 @@
-import { Client } from '@upstash/qstash'
-
-let qstashClient: Client | null = null
-
-export function getQStashClient(): Client {
-  if (!qstashClient) {
-    const token = process.env.QSTASH_TOKEN
-    if (!token) {
-      throw new Error('QSTASH_TOKEN is required')
-    }
-    qstashClient = new Client({ token })
-  }
-  return qstashClient
-}
+// Simple local queue implementation - processes batches synchronously
+// No external services needed!
 
 export async function enqueueBatch(
   url: string,
@@ -22,16 +10,20 @@ export async function enqueueBatch(
     idempotencyKey?: string
   }
 ): Promise<void> {
-  const client = getQStashClient()
+  // For local development, process immediately
+  // In a real scenario, you could use a simple in-memory queue or process directly
   
-  await client.publishJSON({
-    url,
-    body: payload,
-    delay: options?.delay,
-    retries: options?.retries || 3,
-    headers: {
-      'X-Worker-Secret': process.env.WORKER_SECRET || '',
-      'Idempotency-Key': options?.idempotencyKey || `${Date.now()}-${Math.random()}`,
-    },
-  })
+  // Extract the worker endpoint path
+  const workerPath = url.replace(/^https?:\/\/[^/]+/, '')
+  
+  // Process immediately (no external queue needed)
+  // The extraction will be triggered directly
+  if (options?.delay) {
+    // If there's a delay, wait before processing
+    await new Promise(resolve => setTimeout(resolve, options.delay))
+  }
+  
+  // Note: The actual processing happens in the extract/start route
+  // which will call the worker directly instead of using QStash
+  console.log('Batch enqueued (local mode):', payload)
 }

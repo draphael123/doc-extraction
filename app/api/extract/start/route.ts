@@ -1,7 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { PUBLIC_USER_ID } from '@/lib/public-user'
-import { enqueueBatch } from '@/lib/queue/qstash'
+
+// Process batches in the background (local mode)
+async function processBatchesInBackground(
+  jobId: string,
+  templateId: string,
+  batches: string[][]
+) {
+  const baseUrl = process.env.NEXTAUTH_URL ||
+                  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+                  'http://localhost:3000'
+
+  const workerUrl = `${baseUrl}/api/worker/extract-batch`
+
+  for (let i = 0; i < batches.length; i++) {
+    const batch = batches[i]
+    
+    try {
+      // Call worker directly (no external queue)
+      const response = await fetch(workerUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Worker-Secret': process.env.WORKER_SECRET || 'local-dev-secret',
+        },
+        body: JSON.stringify({
+          jobId,
+          templateId,
+          documentIds: batch,
+          batchIndex: i,
+          totalBatches: batches.length,
+        }),
+      })
+
+      if (!response.ok) {
+        console.error(`Batch ${i} failed:`, await response.text())
+      }
+      
+      // Small delay between batches to avoid overwhelming the system
+      if (i < batches.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
+    } catch (error) {
+      console.error(`Error processing batch ${i}:`, error)
+    }
+  }
+}
 
 export const dynamic = 'force-dynamic'
 

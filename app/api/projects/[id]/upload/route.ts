@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { PUBLIC_USER_ID } from '@/lib/public-user'
 import { sanitizeFilename } from '@/lib/utils'
-import { put } from '@vercel/blob'
+import { getBlobAdapter } from '@/lib/storage/blob'
 
 export const dynamic = 'force-dynamic'
 
@@ -64,20 +64,19 @@ export async function POST(
       }
 
       const arrayBuffer = await file.arrayBuffer()
+      const buffer = Buffer.from(arrayBuffer)
       const sanitized = sanitizeFilename(file.name)
       const blobPath = `projects/${params.id}/${Date.now()}-${sanitized}`
 
-      const blob = await put(blobPath, arrayBuffer, {
-        access: 'public',
-        contentType: file.type,
-      })
+      const adapter = getBlobAdapter()
+      const blobUrl = await adapter.upload(buffer, blobPath, file.type)
 
       const document = await prisma.document.create({
         data: {
           projectId: params.id,
           filename: sanitized,
           originalName: file.name,
-          blobUrl: blob.url,
+          blobUrl: blobUrl,
           fileSize: file.size,
           mimeType: file.type,
           status: 'PENDING',
