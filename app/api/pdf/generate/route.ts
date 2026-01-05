@@ -169,17 +169,19 @@ export async function POST(request: NextRequest) {
           maxWidth: 250,
         })
 
-        // Draw value
-        const valueLines = currentPage.drawText(value, {
-          x: leftColumn + 10,
-          y: columnY - 12,
-          size: 10,
-          font: font,
-          maxWidth: 240,
-        })
+                        // Draw value
+                        currentPage.drawText(value, {
+                          x: leftColumn + 10,
+                          y: columnY - 12,
+                          size: 10,
+                          font: font,
+                          maxWidth: 240,
+                        })
 
-        const valueHeight = valueLines.height || 12
-        columnY -= valueHeight + 20
+                        // Estimate height (rough calculation: ~12px per line)
+                        const estimatedLines = Math.ceil(value.length / 40) || 1
+                        const valueHeight = estimatedLines * 12
+                        columnY -= valueHeight + 20
 
         // Switch columns if needed
         if (columnY < 100 && leftColumn === margin) {

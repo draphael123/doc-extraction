@@ -14,7 +14,7 @@ import { useRouter } from 'next/navigation'
 interface Project {
   id: string
   name: string
-  description?: string
+  description?: string | null
   documents: any[]
   templates: any[]
   jobs: any[]

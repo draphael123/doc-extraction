@@ -1,4 +1,4 @@
-import type { FieldDefinition, FieldResult } from './types'
+import type { FieldDefinition, FieldResult } from '../types'
 
 export interface ExtractedText {
   text: string

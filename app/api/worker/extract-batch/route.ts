@@ -90,11 +90,11 @@ export async function POST(request: NextRequest) {
           create: {
             documentId,
             templateId,
-            fieldResults,
+            fieldResults: fieldResults as any,
             status,
           },
           update: {
-            fieldResults,
+            fieldResults: fieldResults as any,
             status,
           },
         })

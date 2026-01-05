@@ -19,7 +19,7 @@ export class VercelBlobAdapter implements BlobAdapter {
   }
 
   async upload(file: Buffer, filename: string, contentType?: string): Promise<string> {
-    const blob = await put(filename, file, {
+    const blob = await put(filename, file as any, {
       access: 'public',
       contentType,
       token: this.token,

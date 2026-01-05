@@ -67,11 +67,10 @@ export async function POST(
       }
 
       const arrayBuffer = await file.arrayBuffer()
-      const buffer = Buffer.from(arrayBuffer)
       const sanitized = sanitizeFilename(file.name)
       const blobPath = `projects/${params.id}/${Date.now()}-${sanitized}`
 
-      const blob = await put(blobPath, buffer, {
+      const blob = await put(blobPath, arrayBuffer, {
         access: 'public',
         contentType: file.type,
       })

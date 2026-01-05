@@ -1,4 +1,5 @@
-import type { FieldDefinition, FieldResult, ExtractedText } from './types'
+import type { FieldDefinition, FieldResult } from './types'
+import type { ExtractedText } from './extractors/base'
 import { RegexExtractor } from './extractors/regex'
 import { KeywordExtractor } from './extractors/keyword'
 import { LLMExtractor } from './extractors/llm'

@@ -1,5 +1,6 @@
 import { BaseExtractor } from './base'
-import type { FieldDefinition, FieldResult, ExtractedText } from './types'
+import type { FieldDefinition, FieldResult } from '../types'
+import type { ExtractedText } from './base'
 
 export class KeywordExtractor extends BaseExtractor {
   async extractField(
