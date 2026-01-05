@@ -122,29 +122,10 @@ export async function POST(request: NextRequest) {
       batches.push(documents.slice(i, i + BATCH_SIZE).map((d) => d.id))
     }
 
-    // Enqueue batches
-    const baseUrl = process.env.NEXTAUTH_URL || 
-                    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
-                    'http://localhost:3000'
-    const workerUrl = `${baseUrl}/api/worker/extract-batch`
-
-    for (let i = 0; i < batches.length; i++) {
-      const batch = batches[i]
-      await enqueueBatch(
-        workerUrl,
-        {
-          jobId: job.id,
-          templateId,
-          documentIds: batch,
-          batchIndex: i,
-          totalBatches: batches.length,
-        },
-        {
-          idempotencyKey: `${job.id}-batch-${i}`,
-          retries: 3,
-        }
-      )
-    }
+    // Process batches in background (local mode - no external queue needed)
+    processBatchesInBackground(job.id, templateId, batches).catch((error) => {
+      console.error('Error processing batches in background:', error)
+    })
 
     // Update job status
     await prisma.job.update({

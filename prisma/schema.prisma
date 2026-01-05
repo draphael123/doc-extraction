@@ -106,7 +106,7 @@ model ExtractionTemplate {
   project     Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
   name        String
   description String?
-  fields      Json              // Array of FieldDefinition
+  fields      String            // JSON string: Array of FieldDefinition
   results     ExtractionResult[]
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
@@ -120,7 +120,7 @@ model ExtractionResult {
   document     Document           @relation(fields: [documentId], references: [id], onDelete: Cascade)
   templateId   String
   template     ExtractionTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
-  fieldResults Json               // Array of FieldResult
+  fieldResults String            // JSON string: Array of FieldResult
   status       String            @default("PENDING")
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
@@ -143,7 +143,7 @@ model Job {
   processedDocs Int       @default(0)
   failedDocs  Int         @default(0)
   errorMessage String?
-  metadata    Json?       // Additional job metadata
+  metadata    String?     // JSON string: Additional job metadata
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   completedAt DateTime?

@@ -70,7 +70,10 @@ export async function POST(request: NextRequest) {
     const pdfDoc = await PDFDocument.create()
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
     const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
-    const fields = template.fields as any[]
+    // Parse JSON string to array (SQLite stores as string)
+    const fields = typeof template.fields === 'string' 
+      ? JSON.parse(template.fields) 
+      : (template.fields as any[])
 
     let currentPage = pdfDoc.addPage([612, 792]) // Letter size
     let yPosition = 750
@@ -133,7 +136,10 @@ export async function POST(request: NextRequest) {
       })
       yPosition -= lineHeight * 1.5
 
-      const fieldResults = result.fieldResults as any[]
+      // Parse JSON string to array (SQLite stores as string)
+      const fieldResults = typeof result.fieldResults === 'string'
+        ? JSON.parse(result.fieldResults)
+        : (result.fieldResults as any[])
 
       // Two-column layout for fields
       let leftColumn = margin

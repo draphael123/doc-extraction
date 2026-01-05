@@ -31,5 +31,14 @@ export default async function ProjectPage({
     redirect('/')
   }
 
-  return <ProjectDashboard project={project} />
+  // Parse JSON strings in templates for client components
+  const parsedProject = {
+    ...project,
+    templates: project.templates.map(t => ({
+      ...t,
+      fields: typeof t.fields === 'string' ? JSON.parse(t.fields) : t.fields,
+    })),
+  }
+
+  return <ProjectDashboard project={parsedProject} />
 }

@@ -51,7 +51,15 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    return NextResponse.json(results)
+    // Parse JSON strings back to objects for API response
+    const parsedResults = results.map(r => ({
+      ...r,
+      fieldResults: typeof r.fieldResults === 'string' 
+        ? JSON.parse(r.fieldResults) 
+        : r.fieldResults,
+    }))
+
+    return NextResponse.json(parsedResults)
   } catch (error) {
     console.error('Error fetching results:', error)
     return NextResponse.json(

@@ -34,7 +34,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Template not found' }, { status: 404 })
     }
 
-    const fields = template.fields as any[]
+    // Parse JSON string to array (SQLite stores as string)
+    const fields = typeof template.fields === 'string' 
+      ? JSON.parse(template.fields) 
+      : (template.fields as any[])
     const engine = new ExtractionEngine()
     const blobAdapter = getBlobAdapter()
 
@@ -91,11 +94,11 @@ export async function POST(request: NextRequest) {
           create: {
             documentId,
             templateId,
-            fieldResults: fieldResults as any,
+            fieldResults: JSON.stringify(fieldResults), // SQLite stores as JSON string
             status,
           },
           update: {
-            fieldResults: fieldResults as any,
+            fieldResults: JSON.stringify(fieldResults), // SQLite stores as JSON string
             status,
           },
         })

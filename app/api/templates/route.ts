@@ -47,7 +47,13 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     })
 
-    return NextResponse.json(templates)
+    // Parse JSON strings back to objects for API response
+    const parsedTemplates = templates.map(t => ({
+      ...t,
+      fields: typeof t.fields === 'string' ? JSON.parse(t.fields) : t.fields,
+    }))
+
+    return NextResponse.json(parsedTemplates)
   } catch (error) {
     console.error('Error fetching templates:', error)
     return NextResponse.json(
@@ -79,7 +85,7 @@ export async function POST(request: NextRequest) {
         projectId: validated.projectId,
         name: validated.name,
         description: validated.description,
-        fields: validated.fields,
+        fields: JSON.stringify(validated.fields), // SQLite stores as JSON string
       },
     })
 
