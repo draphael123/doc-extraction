@@ -6,6 +6,9 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
+    // Ensure database connection is working
+    await prisma.$connect()
+    
     const projects = await prisma.project.findMany({
       where: { userId: PUBLIC_USER_ID },
       orderBy: { createdAt: 'desc' },
@@ -20,17 +23,25 @@ export async function GET(request: NextRequest) {
     })
 
     return NextResponse.json(projects)
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching projects:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch projects' },
+      { 
+        error: 'Failed to fetch projects',
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      },
       { status: 500 }
     )
+  } finally {
+    await prisma.$disconnect().catch(() => {})
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
+    // Ensure database connection is working
+    await prisma.$connect()
+    
     const body = await request.json()
     const { name, description } = body
 
@@ -105,7 +116,7 @@ export async function POST(request: NextRequest) {
     if (error.code === 'P2002') {
       errorMessage = 'A project with this name already exists'
     } else if (error.code === 'P2003') {
-      errorMessage = 'Database constraint violation. Please try again.'
+      errorMessage = 'Database constraint violation. Please ensure the public user exists.'
     } else if (error.message) {
       errorMessage = `Error: ${error.message}`
     }
@@ -114,5 +125,7 @@ export async function POST(request: NextRequest) {
       { error: errorMessage, details: process.env.NODE_ENV === 'development' ? error.message : undefined },
       { status: 500 }
     )
+  } finally {
+    await prisma.$disconnect().catch(() => {})
   }
 }

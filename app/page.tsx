@@ -6,17 +6,38 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { StatsCard } from './components/stats-card'
 
 export default async function Home() {
-  // Fetch statistics
+  // Fetch statistics directly from database
   let stats = null
   try {
-    const baseUrl = process.env.NEXTAUTH_URL || process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : 'http://localhost:3000'
-    const res = await fetch(`${baseUrl}/api/stats`, { cache: 'no-store' })
-    if (res.ok) {
-      stats = await res.json()
+    const { prisma } = await import('@/lib/prisma')
+    const { PUBLIC_USER_ID } = await import('@/lib/public-user')
+    
+    const [totalProjects, totalDocuments, totalTemplates, completedDocs] = await Promise.all([
+      prisma.project.count({ where: { userId: PUBLIC_USER_ID } }),
+      prisma.document.count({
+        where: { project: { userId: PUBLIC_USER_ID } },
+      }),
+      prisma.extractionTemplate.count({
+        where: { project: { userId: PUBLIC_USER_ID } },
+      }),
+      prisma.document.count({
+        where: {
+          project: { userId: PUBLIC_USER_ID },
+          status: 'COMPLETED',
+        },
+      }),
+    ])
+
+    const successRate = totalDocuments > 0 ? Math.round((completedDocs / totalDocuments) * 100) : 0
+
+    stats = {
+      totalProjects,
+      totalDocuments,
+      totalTemplates,
+      successRate,
     }
   } catch (error) {
+    // Silently fail - stats are optional
     console.error('Error fetching stats:', error)
   }
   return (
